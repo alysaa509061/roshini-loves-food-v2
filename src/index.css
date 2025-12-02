@@ -101,12 +101,26 @@ All colors MUST be HSL.
   @media (pointer: fine) {
     *, *::before, *::after {
       cursor: url('/redbow.png') 8 8, auto !important;
+      transition: transform 0.2s ease, opacity 0.2s ease;
     }
     
     a, button, [role="button"], input[type="submit"], input[type="button"], 
     [class*="card"], [class*="Card"], .cursor-pointer, 
     label[for], select, textarea {
       cursor: url('/r-cursor.png') 12 12, pointer !important;
+      transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    /* Smooth hover effects for interactive elements */
+    a:hover, button:hover, [role="button"]:hover,
+    [class*="card"]:hover, [class*="Card"]:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Smooth active state */
+    a:active, button:active, [role="button"]:active {
+      transform: translateY(0);
+      transition: transform 0.05s ease;
     }
   }
 
