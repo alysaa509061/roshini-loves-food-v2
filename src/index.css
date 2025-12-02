@@ -100,11 +100,11 @@ All colors MUST be HSL.
   /* Custom cursor for pointer devices (desktop, stylus) */
   @media (pointer: fine) {
     *, *::before, *::after {
-      cursor: url('/redbow.png') 16 16, auto;
+      cursor: url('/redbow.png') 12 12, auto;
     }
     
     a, button, [role="button"], input[type="submit"], input[type="button"] {
-      cursor: url('/redbow.png') 16 16, pointer;
+      cursor: url('/r-cursor.png') 12 12, pointer;
     }
   }
 
