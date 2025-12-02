@@ -106,7 +106,7 @@ All colors MUST be HSL.
     a, button, [role="button"], input[type="submit"], input[type="button"], 
     [class*="card"], [class*="Card"], .cursor-pointer, 
     label[for], select, textarea {
-      cursor: url('/r-cursor.png') 8 8, pointer !important;
+      cursor: url('/r-cursor.png') 12 12, pointer !important;
     }
   }
 
