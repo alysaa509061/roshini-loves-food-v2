@@ -25,6 +25,42 @@ const RecipeDetail = ({ recipe, onBack, onEdit, onDelete }: RecipeDetailProps) =
     }
   };
 
+  const adjustIngredient = (ingredient: string): string => {
+    // Match common patterns: "2 cups", "1/2 tsp", "1.5 kg", etc.
+    const numberPattern = /^(\d+(?:\/\d+)?(?:\.\d+)?)\s+(.+)$/;
+    const match = ingredient.match(numberPattern);
+    
+    if (match) {
+      const [, amount, rest] = match;
+      let numericAmount: number;
+      
+      // Handle fractions like "1/2"
+      if (amount.includes('/')) {
+        const [numerator, denominator] = amount.split('/').map(Number);
+        numericAmount = numerator / denominator;
+      } else {
+        numericAmount = parseFloat(amount);
+      }
+      
+      const adjustedAmount = numericAmount * servingMultiplier;
+      
+      // Format the adjusted amount nicely
+      let formattedAmount: string;
+      if (adjustedAmount % 1 === 0) {
+        formattedAmount = adjustedAmount.toString();
+      } else if (adjustedAmount % 0.5 === 0) {
+        const whole = Math.floor(adjustedAmount);
+        formattedAmount = whole > 0 ? `${whole} 1/2` : '1/2';
+      } else {
+        formattedAmount = adjustedAmount.toFixed(2).replace(/\.?0+$/, '');
+      }
+      
+      return `${formattedAmount} ${rest}`;
+    }
+    
+    return ingredient;
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -112,7 +148,7 @@ const RecipeDetail = ({ recipe, onBack, onEdit, onDelete }: RecipeDetailProps) =
               {recipe.ingredients.map((ingredient, index) => (
                 <li key={index} className="flex items-start gap-2 text-sm">
                   <span className="text-primary mt-1">•</span>
-                  <span>{ingredient}</span>
+                  <span>{adjustIngredient(ingredient)}</span>
                 </li>
               ))}
             </ul>
