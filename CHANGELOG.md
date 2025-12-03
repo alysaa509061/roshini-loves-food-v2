@@ -4,6 +4,25 @@ All notable changes to RoshiniLovesFood are documented in this file.
 
 ---
 
+## [1.0.6] - 2025-12-03
+
+### Changed
+- Improved responsive design across all components
+- Removed remaining emojis from RecipeCard, RecipeDetail, RecipeForm, RecipeImport
+
+### Files Modified
+- `src/components/RecipeCard.tsx` - Removed emoji from Veg badge
+- `src/components/RecipeDetail.tsx` - Made header responsive, removed emojis
+- `src/components/RecipeForm.tsx` - Made grid responsive for mobile, removed emoji
+- `src/components/RecipeImport.tsx` - Removed emojis from info text
+
+### Responsive Improvements
+- RecipeDetail: Stacked layout on mobile for header and actions
+- RecipeForm: Single column grid on mobile, two columns on larger screens
+- All components now adapt properly to device width
+
+---
+
 ## [1.0.5] - 2025-12-03
 
 ### Changed
