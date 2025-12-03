@@ -1,73 +1,105 @@
-# Welcome to your Lovable project
+# RoshiniLovesFood
 
-## Project info
+A sassy, scrapbook-style vegetarian recipe journal built with modern web technologies.
 
-**URL**: https://lovable.dev/projects/8dac6052-dd87-414f-949a-135b549a98d2
+## Features
 
-## How can I edit this code?
+- **Password-Protected Access** - Secure entry with personalized access codes
+- **Recipe Management** - Add, edit, delete, and organize vegetarian recipes
+- **Import/Export** - Backup and restore recipes via JSON
+- **Search & Filter** - Find recipes by title, description, or tags
+- **Vegetarian Validation** - Automatic validation ensures all recipes are vegetarian-friendly
+- **Custom Cursor** - Unique R-cursor design for desktop users
+- **Scrapbook Aesthetic** - Handcrafted visual design with animations
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Framework**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui (Radix UI primitives)
+- **State Management**: React Query
+- **Routing**: React Router DOM
+- **Fonts**: Playfair Display (headings), Roboto Mono (body)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8dac6052-dd87-414f-949a-135b549a98d2) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 18+ 
+- npm or bun
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+# Clone the repository
+git clone <repository-url>
+cd roshini-loves-food
 
-Follow these steps:
+# Install dependencies
+npm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Build for Production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run build
+npm run preview
+```
 
-**Use GitHub Codespaces**
+## Project Structure
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```
+├── public/
+│   ├── r-cursor.png        # Custom cursor image
+│   ├── redbow.png          # Decorative bow image
+│   ├── roshie-avatar.jpg   # Profile avatar
+│   └── robots.txt
+├── src/
+│   ├── components/
+│   │   ├── ui/             # shadcn/ui components
+│   │   ├── AccessGate.tsx  # Password entry screen
+│   │   ├── NavLink.tsx
+│   │   ├── RecipeCard.tsx
+│   │   ├── RecipeDetail.tsx
+│   │   ├── RecipeForm.tsx
+│   │   └── RecipeImport.tsx
+│   ├── hooks/
+│   │   ├── use-mobile.tsx
+│   │   ├── use-toast.ts
+│   │   └── useRecipes.ts
+│   ├── pages/
+│   │   ├── Index.tsx       # Main application page
+│   │   └── NotFound.tsx
+│   ├── types/
+│   │   └── recipe.ts
+│   ├── utils/
+│   │   ├── demoRecipes.ts
+│   │   └── vegValidator.ts
+│   ├── App.tsx
+│   ├── index.css           # Design system & custom styles
+│   └── main.tsx
+├── index.html
+├── tailwind.config.ts
+├── vite.config.ts
+└── package.json
+```
 
-## What technologies are used for this project?
+## Design System
 
-This project is built with:
+The application uses a dark theme with the following color palette:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+| Token | HSL Value | Usage |
+|-------|-----------|-------|
+| `--background` | `0 0% 0%` | Page background |
+| `--foreground` | `56 100% 64%` | Primary text (golden yellow) |
+| `--primary` | `6 35% 40%` | Primary accent (brownish red) |
+| `--secondary` | `267 25% 66%` | Secondary accent (purple) |
+| `--accent` | `88 25% 32%` | Accent color (olive green) |
 
-## How can I deploy this project?
+## License
 
-Simply open [Lovable](https://lovable.dev/projects/8dac6052-dd87-414f-949a-135b549a98d2) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Private project - All rights reserved.
