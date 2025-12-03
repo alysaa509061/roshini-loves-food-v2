@@ -18,7 +18,7 @@ const RecipeCard = ({ recipe, onClick }: RecipeCardProps) => {
         <CardTitle className="flex items-start justify-between gap-2 font-heading">
           <span className="text-lg">{recipe.title}</span>
           <Badge variant="outline" className="bg-accent/20 text-accent-foreground border-accent shrink-0">
-            🌿 Veg
+            Veg
           </Badge>
         </CardTitle>
       </CardHeader>

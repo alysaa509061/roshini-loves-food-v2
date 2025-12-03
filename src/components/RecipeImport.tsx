@@ -150,9 +150,9 @@ const RecipeImport = ({ onImport, onClose }: RecipeImportProps) => {
         </div>
 
         <div className="text-xs text-muted-foreground space-y-1">
-          <p>📝 File must be in JSON format</p>
-          <p>🌿 All recipes will be validated for vegetarian content</p>
-          <p>✨ Non-veg recipes will be rejected automatically</p>
+          <p>File must be in JSON format</p>
+          <p>All recipes will be validated for vegetarian content</p>
+          <p>Non-veg recipes will be rejected automatically</p>
         </div>
       </CardContent>
     </Card>

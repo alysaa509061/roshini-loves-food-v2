@@ -109,7 +109,7 @@ const RecipeForm = ({ recipe, onSubmit, onCancel }: RecipeFormProps) => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="servings">Servings</Label>
               <Input
@@ -174,7 +174,7 @@ const RecipeForm = ({ recipe, onSubmit, onCancel }: RecipeFormProps) => {
           Cancel
         </Button>
         <Button type="submit" className="font-mono">
-          {recipe ? "Update Recipe" : "Add to Cookbook"} 📖
+          {recipe ? "Update Recipe" : "Add to Cookbook"}
         </Button>
       </div>
     </form>

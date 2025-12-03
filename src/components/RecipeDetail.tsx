@@ -63,7 +63,7 @@ const RecipeDetail = ({ recipe, onBack, onEdit, onDelete }: RecipeDetailProps) =
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Button variant="ghost" onClick={onBack} className="gap-2 font-mono">
           <ArrowLeft className="w-4 h-4" />
           Back to Recipes
@@ -81,15 +81,15 @@ const RecipeDetail = ({ recipe, onBack, onEdit, onDelete }: RecipeDetailProps) =
       <Card>
         <CardHeader>
           <div className="space-y-4">
-            <div className="flex items-start justify-between gap-4">
-              <CardTitle className="text-3xl font-heading">{recipe.title}</CardTitle>
-              <Badge variant="outline" className="bg-accent/20 text-accent-foreground border-accent">
-                🌿 Vegetarian
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+              <CardTitle className="text-2xl sm:text-3xl font-heading">{recipe.title}</CardTitle>
+              <Badge variant="outline" className="bg-accent/20 text-accent-foreground border-accent shrink-0 w-fit">
+                Vegetarian
               </Badge>
             </div>
             <p className="text-muted-foreground">{recipe.description}</p>
 
-            <div className="flex items-center gap-6 text-sm">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm">
               {recipe.cookTime && (
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-primary" />
@@ -142,7 +142,7 @@ const RecipeDetail = ({ recipe, onBack, onEdit, onDelete }: RecipeDetailProps) =
         <CardContent className="space-y-6">
           <div>
             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2 font-heading">
-              🥬 Ingredients
+              Ingredients
             </h3>
             <ul className="space-y-2">
               {recipe.ingredients.map((ingredient, index) => (
@@ -158,7 +158,7 @@ const RecipeDetail = ({ recipe, onBack, onEdit, onDelete }: RecipeDetailProps) =
 
           <div>
             <h3 className="text-xl font-semibold mb-3 flex items-center gap-2 font-heading">
-              👩‍🍳 Instructions
+              Instructions
             </h3>
             <ol className="space-y-3">
               {recipe.instructions.map((instruction, index) => (
