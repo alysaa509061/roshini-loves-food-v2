@@ -19,8 +19,8 @@ All notable changes to RoshiniLovesFood are documented in this file.
 - `src/pages/Index.tsx` - Removed emojis from toasts, removed bow from header
 - `public/r-cursor.png` - Restored original uploaded cursor image
 
-### Password Options Added
-- 180306, 1803, 1806, 0306, 060381, 3081, 6030
+### Security
+- Updated password validation to accept multiple date-based formats
 
 ---
 
