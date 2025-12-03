@@ -29,8 +29,8 @@ const Index = () => {
   const handleUnlock = () => {
     setIsUnlocked(true);
     toast({
-      title: "Welcome back, Roshini! 🎉",
-      description: "Your veggie kingdom awaits 🌿",
+      title: "Welcome back, Roshini!",
+      description: "Your veggie kingdom awaits",
     });
   };
 
@@ -46,7 +46,7 @@ const Index = () => {
     });
 
     toast({
-      title: "Recipe added! 📖",
+      title: "Recipe added!",
       description: `${recipe.title} is now in your cookbook`,
     });
 
@@ -67,7 +67,7 @@ const Index = () => {
     });
 
     toast({
-      title: "Recipe updated! ✨",
+      title: "Recipe updated!",
       description: `${data.title} has been saved`,
     });
 
@@ -93,8 +93,8 @@ const Index = () => {
   const handleImportRecipes = (importedRecipes: any[]) => {
     const newRecipes = importRecipes(importedRecipes);
     toast({
-      title: `Imported ${newRecipes.length} recipe${newRecipes.length > 1 ? 's' : ''}! 📚`,
-      description: "All recipes passed the veg check ✅",
+      title: `Imported ${newRecipes.length} recipe${newRecipes.length > 1 ? 's' : ''}!`,
+      description: "All recipes passed the veg check",
     });
     setCurrentView("list");
   };
@@ -112,7 +112,7 @@ const Index = () => {
     URL.revokeObjectURL(url);
 
     toast({
-      title: "Recipes exported! 📥",
+      title: "Recipes exported!",
       description: "JSON file downloaded successfully",
     });
   };
@@ -141,15 +141,9 @@ const Index = () => {
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight font-heading">
               RoshiniLovesFood
             </h1>
-            <img
-              src="/redbow.png"
-              alt="Decoration"
-              className="w-12 h-12 animate-float"
-              style={{ animationDelay: '1s' }}
-            />
           </div>
           <p className="text-muted-foreground">
-            A sassy, scrapbook-style vegetarian recipe journal 🌿
+            A sassy, scrapbook-style vegetarian recipe journal
           </p>
         </div>
 
