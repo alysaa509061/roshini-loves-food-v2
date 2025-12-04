@@ -4,17 +4,37 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Clock, Users, Minus, Plus, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, Clock, Users, Minus, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { useSwipe } from "@/hooks/useSwipe";
 
 interface RecipeDetailProps {
   recipe: Recipe;
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onPrevious?: () => void;
+  onNext?: () => void;
+  hasPrevious?: boolean;
+  hasNext?: boolean;
 }
 
-const RecipeDetail = ({ recipe, onBack, onEdit, onDelete }: RecipeDetailProps) => {
+const RecipeDetail = ({ 
+  recipe, 
+  onBack, 
+  onEdit, 
+  onDelete,
+  onPrevious,
+  onNext,
+  hasPrevious = false,
+  hasNext = false,
+}: RecipeDetailProps) => {
   const [servingMultiplier, setServingMultiplier] = useState(1);
+
+  const swipeHandlers = useSwipe({
+    onSwipeLeft: hasNext ? onNext : undefined,
+    onSwipeRight: hasPrevious ? onPrevious : undefined,
+    threshold: 50,
+  });
 
   const adjustedServings = recipe.servings * servingMultiplier;
 
@@ -62,7 +82,49 @@ const RecipeDetail = ({ recipe, onBack, onEdit, onDelete }: RecipeDetailProps) =
   };
 
   return (
-    <div className="space-y-6">
+    <div 
+      className="space-y-6 select-none"
+      {...swipeHandlers}
+    >
+      {/* Mobile swipe indicator */}
+      {(hasPrevious || hasNext) && (
+        <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground sm:hidden">
+          {hasPrevious && (
+            <span className="flex items-center gap-1">
+              <ChevronLeft className="w-3 h-3" /> Swipe for previous
+            </span>
+          )}
+          {hasNext && (
+            <span className="flex items-center gap-1">
+              Swipe for next <ChevronRight className="w-3 h-3" />
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Desktop navigation buttons */}
+      {(hasPrevious || hasNext) && (
+        <div className="hidden sm:flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onPrevious}
+            disabled={!hasPrevious}
+            className="gap-1"
+          >
+            <ChevronLeft className="w-4 h-4" /> Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onNext}
+            disabled={!hasNext}
+            className="gap-1"
+          >
+            Next <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Button variant="ghost" onClick={onBack} className="gap-2 font-mono">
           <ArrowLeft className="w-4 h-4" />

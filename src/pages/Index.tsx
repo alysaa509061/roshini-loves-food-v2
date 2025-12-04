@@ -261,6 +261,20 @@ const Index = () => {
             }}
             onEdit={() => setCurrentView("edit")}
             onDelete={handleDeleteRecipe}
+            hasPrevious={filteredRecipes.findIndex(r => r.id === selectedRecipe.id) > 0}
+            hasNext={filteredRecipes.findIndex(r => r.id === selectedRecipe.id) < filteredRecipes.length - 1}
+            onPrevious={() => {
+              const currentIndex = filteredRecipes.findIndex(r => r.id === selectedRecipe.id);
+              if (currentIndex > 0) {
+                setSelectedRecipe(filteredRecipes[currentIndex - 1]);
+              }
+            }}
+            onNext={() => {
+              const currentIndex = filteredRecipes.findIndex(r => r.id === selectedRecipe.id);
+              if (currentIndex < filteredRecipes.length - 1) {
+                setSelectedRecipe(filteredRecipes[currentIndex + 1]);
+              }
+            }}
           />
         )}
       </div>

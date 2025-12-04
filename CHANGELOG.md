@@ -4,6 +4,28 @@ All notable changes to RoshiniLovesFood are documented in this file.
 
 ---
 
+## [1.0.7] - 2025-12-04
+
+### Added
+- Touch-friendly swipe gestures for recipe navigation on mobile devices
+- Previous/Next navigation buttons on desktop for recipe browsing
+- Custom `useSwipe` hook for reusable touch gesture handling
+
+### Files Added
+- `src/hooks/useSwipe.ts` - Custom hook for swipe gesture detection
+
+### Files Modified
+- `src/components/RecipeDetail.tsx` - Added swipe handlers and navigation UI
+- `src/pages/Index.tsx` - Added navigation props for recipe browsing
+
+### Features
+- Swipe left/right to navigate between recipes on mobile
+- Visual swipe hints displayed on mobile devices
+- Desktop users get Previous/Next buttons
+- Navigation respects current search filter
+
+---
+
 ## [1.0.6] - 2025-12-03
 
 ### Changed
