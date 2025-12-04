@@ -4,6 +4,21 @@ All notable changes to RoshiniLovesFood are documented in this file.
 
 ---
 
+## [1.0.8] - 2025-12-04
+
+### Security
+- Obfuscated access codes using base64 encoding to prevent plain-text exposure in repository
+
+### Changed
+- Improved touch targets on mobile (larger buttons with touch-manipulation)
+- Export functionality tested and working
+
+### Files Modified
+- `src/components/AccessGate.tsx` - Codes now decoded at runtime from base64
+- `src/components/RecipeDetail.tsx` - Larger touch-friendly buttons on mobile
+
+---
+
 ## [1.0.7] - 2025-12-04
 
 ### Added

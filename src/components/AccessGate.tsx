@@ -6,6 +6,16 @@ interface AccessGateProps {
   onUnlock: () => void;
 }
 
+// Obfuscated valid codes - decoded at runtime
+const getValidCodes = (): string[] => {
+  const encoded = "MTgwMzA2LDE4MDMsMTgwNiwwMzA2LDA2MDM4MSwzMDgxLDYwMzA=";
+  try {
+    return atob(encoded).split(",");
+  } catch {
+    return [];
+  }
+};
+
 const AccessGate = ({ onUnlock }: AccessGateProps) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -14,7 +24,7 @@ const AccessGate = ({ onUnlock }: AccessGateProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (["180306", "1803", "1806", "0306", "060381", "3081", "6030"].includes(password)) {
+    if (getValidCodes().includes(password)) {
       onUnlock();
     } else {
       setError("Nope! Try Roshini's special date");

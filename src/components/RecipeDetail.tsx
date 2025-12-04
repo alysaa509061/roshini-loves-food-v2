@@ -166,11 +166,11 @@ const RecipeDetail = ({
                     type="button"
                     variant="outline"
                     size="icon"
-                    className="h-7 w-7"
+                    className="h-9 w-9 sm:h-7 sm:w-7 touch-manipulation"
                     onClick={() => handleServingChange(-0.5)}
                     disabled={servingMultiplier <= 0.5}
                   >
-                    <Minus className="w-3 h-3" />
+                    <Minus className="w-4 h-4 sm:w-3 sm:h-3" />
                   </Button>
                   <span className="min-w-[60px] text-center">
                     {adjustedServings} servings
@@ -179,11 +179,11 @@ const RecipeDetail = ({
                     type="button"
                     variant="outline"
                     size="icon"
-                    className="h-7 w-7"
+                    className="h-9 w-9 sm:h-7 sm:w-7 touch-manipulation"
                     onClick={() => handleServingChange(0.5)}
                     disabled={servingMultiplier >= 10}
                   >
-                    <Plus className="w-3 h-3" />
+                    <Plus className="w-4 h-4 sm:w-3 sm:h-3" />
                   </Button>
                 </div>
               </div>
