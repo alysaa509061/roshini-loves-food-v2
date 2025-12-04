@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AccessGate from "@/components/AccessGate";
 import RecipeCard from "@/components/RecipeCard";
 import RecipeForm from "@/components/RecipeForm";
 import RecipeDetail from "@/components/RecipeDetail";
 import RecipeImport from "@/components/RecipeImport";
 import { useRecipes } from "@/hooks/useRecipes";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { Recipe, RecipeFormData } from "@/types/recipe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, BookOpen, Download, Upload } from "lucide-react";
+import { Plus, Search, BookOpen, Download, Upload, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type View = "list" | "add" | "edit" | "detail" | "import";
@@ -117,6 +118,20 @@ const Index = () => {
     });
   };
 
+  const handleRefresh = useCallback(async () => {
+    // Simulate a refresh - in a real app this would fetch from API
+    await new Promise(resolve => setTimeout(resolve, 800));
+    toast({
+      title: "Refreshed!",
+      description: `${recipes.length} recipes loaded`,
+    });
+  }, [recipes.length, toast]);
+
+  const { pullDistance, isRefreshing, isReadyToRefresh, handlers } = usePullToRefresh({
+    onRefresh: handleRefresh,
+    threshold: 80,
+  });
+
   const filteredRecipes = recipes.filter(recipe =>
     recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -128,7 +143,31 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div 
+      className="min-h-screen p-4 md:p-8"
+      {...(currentView === "list" ? handlers : {})}
+    >
+      {/* Pull to refresh indicator */}
+      {currentView === "list" && pullDistance > 0 && (
+        <div 
+          className="fixed top-0 left-0 right-0 flex justify-center z-50 transition-transform sm:hidden"
+          style={{ transform: `translateY(${pullDistance - 40}px)` }}
+        >
+          <div className={`
+            bg-primary text-primary-foreground rounded-full p-2 shadow-lg
+            transition-all duration-200
+            ${isReadyToRefresh ? 'scale-110' : 'scale-100'}
+          `}>
+            <RefreshCw 
+              className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`}
+              style={{ 
+                transform: isRefreshing ? 'none' : `rotate(${pullDistance * 3}deg)`,
+              }}
+            />
+          </div>
+        </div>
+      )}
+      
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-4 py-8 scrapbook-paper">
