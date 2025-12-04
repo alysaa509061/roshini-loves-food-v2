@@ -4,6 +4,20 @@ All notable changes to RoshiniLovesFood are documented in this file.
 
 ---
 
+## [1.0.9] - 2025-12-04
+
+### Added
+- Pull-to-refresh gesture for mobile recipe list
+- Visual refresh indicator with animated icon
+
+### Files Added
+- `src/hooks/usePullToRefresh.ts` - Custom hook for pull-to-refresh gesture
+
+### Files Modified
+- `src/pages/Index.tsx` - Integrated pull-to-refresh on recipe list
+
+---
+
 ## [1.0.8] - 2025-12-04
 
 ### Security
