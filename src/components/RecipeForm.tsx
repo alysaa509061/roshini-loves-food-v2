@@ -169,11 +169,11 @@ const RecipeForm = ({ recipe, onSubmit, onCancel }: RecipeFormProps) => {
         </CardContent>
       </Card>
 
-      <div className="flex gap-3 justify-end">
-        <Button type="button" variant="outline" onClick={onCancel} className="font-mono">
+      <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
+        <Button type="button" variant="outline" onClick={onCancel} className="font-mono w-full sm:w-auto">
           Cancel
         </Button>
-        <Button type="submit" className="font-mono">
+        <Button type="submit" className="font-mono w-full sm:w-auto">
           {recipe ? "Update Recipe" : "Add to Cookbook"}
         </Button>
       </div>

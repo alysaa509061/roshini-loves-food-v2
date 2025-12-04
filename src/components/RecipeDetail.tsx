@@ -125,16 +125,16 @@ const RecipeDetail = ({
           </Button>
         </div>
       )}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <Button variant="ghost" onClick={onBack} className="gap-2 font-mono">
-          <ArrowLeft className="w-4 h-4" />
-          Back to Recipes
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <Button variant="ghost" onClick={onBack} className="gap-2 font-mono text-sm justify-start">
+          <ArrowLeft className="w-4 h-4 shrink-0" />
+          <span className="truncate">Back to Recipes</span>
         </Button>
-        <div className="flex gap-2">
-          <Button variant="outline" size="icon" onClick={onEdit}>
+        <div className="flex gap-2 self-end sm:self-auto">
+          <Button variant="outline" size="icon" onClick={onEdit} className="shrink-0">
             <Edit className="w-4 h-4" />
           </Button>
-          <Button variant="destructive" size="icon" onClick={onDelete}>
+          <Button variant="destructive" size="icon" onClick={onDelete} className="shrink-0">
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>

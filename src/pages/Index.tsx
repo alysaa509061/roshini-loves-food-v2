@@ -151,8 +151,8 @@ const Index = () => {
         {currentView === "list" && (
           <>
             {/* Action Bar */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
+            <div className="flex flex-col gap-3">
+              <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search recipes, tags..."
@@ -161,29 +161,32 @@ const Index = () => {
                   className="pl-10"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   onClick={handleExportRecipes}
                   variant="outline"
-                  className="font-mono gap-2"
+                  size="sm"
+                  className="font-mono gap-1 text-xs sm:text-sm sm:gap-2"
                   disabled={recipes.length === 0}
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                   Export
                 </Button>
                 <Button
                   onClick={() => setCurrentView("import")}
                   variant="outline"
-                  className="font-mono gap-2"
+                  size="sm"
+                  className="font-mono gap-1 text-xs sm:text-sm sm:gap-2"
                 >
-                  <Upload className="w-4 h-4" />
+                  <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
                   Import
                 </Button>
                 <Button
                   onClick={() => setCurrentView("add")}
-                  className="font-mono gap-2"
+                  size="sm"
+                  className="font-mono gap-1 text-xs sm:text-sm sm:gap-2 ml-auto"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                   New Recipe
                 </Button>
               </div>
