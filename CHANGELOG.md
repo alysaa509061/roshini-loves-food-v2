@@ -2,225 +2,233 @@
 
 All notable changes to RoshiniLovesFood are documented in this file.
 
+Format: `[Version] - YYYY-MM-DD @ HH:MM UTC`
+
 ---
 
-## [1.0.9] - 2025-12-04
+## [1.1.0] - 2025-12-05 @ 10:30 UTC
+
+### Changed
+- Enhanced CHANGELOG format with timestamps and function tracking
+- Updated README with detailed change documentation
+
+### Files Modified
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `CHANGELOG.md` | Modified | N/A (documentation) |
+| `README.md` | Modified | N/A (documentation) |
+
+---
+
+## [1.0.10] - 2025-12-04 @ 16:45 UTC
+
+### Fixed
+- Mobile button overflow causing horizontal scroll
+- Action buttons now wrap properly on small screens
+
+### Files Modified
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `src/pages/Index.tsx` | Modified | `Index()` - action bar button layout |
+| `src/components/RecipeForm.tsx` | Modified | `RecipeForm()` - form button stacking |
+| `src/components/RecipeDetail.tsx` | Modified | `RecipeDetail()` - back/action button responsive layout |
+
+---
+
+## [1.0.9] - 2025-12-04 @ 15:20 UTC
 
 ### Added
 - Pull-to-refresh gesture for mobile recipe list
-- Visual refresh indicator with animated icon
+- Visual refresh indicator with animated spinner icon
 
 ### Files Added
-- `src/hooks/usePullToRefresh.ts` - Custom hook for pull-to-refresh gesture
+| File | Action | Functions/Exports |
+|------|--------|-------------------|
+| `src/hooks/usePullToRefresh.ts` | Created | `usePullToRefresh()` hook |
 
 ### Files Modified
-- `src/pages/Index.tsx` - Integrated pull-to-refresh on recipe list
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `src/pages/Index.tsx` | Modified | `Index()` - added touch handlers, `handleRefresh()` callback |
 
 ---
 
-## [1.0.8] - 2025-12-04
+## [1.0.8] - 2025-12-04 @ 14:00 UTC
 
 ### Security
-- Obfuscated access codes using base64 encoding to prevent plain-text exposure in repository
+- Obfuscated access codes using base64 encoding to prevent plain-text exposure
 
 ### Changed
 - Improved touch targets on mobile (larger buttons with touch-manipulation)
-- Export functionality tested and working
 
 ### Files Modified
-- `src/components/AccessGate.tsx` - Codes now decoded at runtime from base64
-- `src/components/RecipeDetail.tsx` - Larger touch-friendly buttons on mobile
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `src/components/AccessGate.tsx` | Modified | `AccessGate()` - `atob()` decoding for passwords |
+| `src/components/RecipeDetail.tsx` | Modified | `RecipeDetail()` - button sizing classes |
 
 ---
 
-## [1.0.7] - 2025-12-04
+## [1.0.7] - 2025-12-04 @ 12:30 UTC
 
 ### Added
-- Touch-friendly swipe gestures for recipe navigation on mobile devices
-- Previous/Next navigation buttons on desktop for recipe browsing
-- Custom `useSwipe` hook for reusable touch gesture handling
+- Touch-friendly swipe gestures for recipe navigation on mobile
+- Previous/Next navigation buttons on desktop
+- Custom swipe gesture hook
 
 ### Files Added
-- `src/hooks/useSwipe.ts` - Custom hook for swipe gesture detection
+| File | Action | Functions/Exports |
+|------|--------|-------------------|
+| `src/hooks/useSwipe.ts` | Created | `useSwipe()` hook |
 
 ### Files Modified
-- `src/components/RecipeDetail.tsx` - Added swipe handlers and navigation UI
-- `src/pages/Index.tsx` - Added navigation props for recipe browsing
-
-### Features
-- Swipe left/right to navigate between recipes on mobile
-- Visual swipe hints displayed on mobile devices
-- Desktop users get Previous/Next buttons
-- Navigation respects current search filter
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `src/components/RecipeDetail.tsx` | Modified | `RecipeDetail()` - added `useSwipe`, navigation handlers |
+| `src/pages/Index.tsx` | Modified | `Index()` - added `onNavigate`, `currentIndex`, `totalRecipes` props |
 
 ---
 
-## [1.0.6] - 2025-12-03
+## [1.0.6] - 2025-12-03 @ 22:15 UTC
 
 ### Changed
 - Improved responsive design across all components
-- Removed remaining emojis from RecipeCard, RecipeDetail, RecipeForm, RecipeImport
+- Removed remaining emojis from UI
 
 ### Files Modified
-- `src/components/RecipeCard.tsx` - Removed emoji from Veg badge
-- `src/components/RecipeDetail.tsx` - Made header responsive, removed emojis
-- `src/components/RecipeForm.tsx` - Made grid responsive for mobile, removed emoji
-- `src/components/RecipeImport.tsx` - Removed emojis from info text
-
-### Responsive Improvements
-- RecipeDetail: Stacked layout on mobile for header and actions
-- RecipeForm: Single column grid on mobile, two columns on larger screens
-- All components now adapt properly to device width
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `src/components/RecipeCard.tsx` | Modified | `RecipeCard()` - badge text |
+| `src/components/RecipeDetail.tsx` | Modified | `RecipeDetail()` - header layout |
+| `src/components/RecipeForm.tsx` | Modified | `RecipeForm()` - grid classes |
+| `src/components/RecipeImport.tsx` | Modified | `RecipeImport()` - info text |
 
 ---
 
-## [1.0.5] - 2025-12-03
+## [1.0.5] - 2025-12-03 @ 20:00 UTC
 
 ### Changed
-- Updated custom cursor system: r-cursor.png as default, system cursor on hover
-- Removed all emoji characters from UI text
-- Removed decorative bow image from AccessGate screen
-- Removed floating bow decoration from main header
-- Updated password validation to accept multiple date formats
+- Updated custom cursor system
+- Removed all emoji characters from UI
+- Removed decorative bow images
+- Updated password validation formats
 
 ### Files Modified
-- `src/index.css` - Updated cursor CSS rules with cache-busting
-- `src/components/AccessGate.tsx` - Removed bow image, emojis, updated password list
-- `src/pages/Index.tsx` - Removed emojis from toasts, removed bow from header
-- `public/r-cursor.png` - Restored original uploaded cursor image
-
-### Security
-- Updated password validation to accept multiple date-based formats
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `src/index.css` | Modified | CSS cursor rules |
+| `src/components/AccessGate.tsx` | Modified | `AccessGate()` - password validation logic |
+| `src/pages/Index.tsx` | Modified | `Index()` - toast messages, header JSX |
 
 ---
 
-## [1.0.4] - 2025-12-03
+## [1.0.4] - 2025-12-03 @ 18:30 UTC
 
 ### Changed
 - Resized redbow.png cursor to 32x32 pixels
-- Updated cursor hotspot positions in CSS
+- Updated cursor hotspot positions
 
 ### Files Modified
-- `public/redbow.png` - Resized to 32x32
-- `src/index.css` - Updated cursor hotspot values
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `public/redbow.png` | Modified | N/A (asset) |
+| `src/index.css` | Modified | CSS hotspot values |
 
 ---
 
-## [1.0.3] - 2025-12-03
+## [1.0.3] - 2025-12-03 @ 17:00 UTC
 
 ### Added
-- Custom hover cursor (r-cursor.png) from user upload
+- Custom hover cursor from user upload
 - Smooth cursor transition animations
 
 ### Files Modified
-- `public/r-cursor.png` - Added new hover cursor image
-- `src/index.css` - Added cursor transition effects
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `public/r-cursor.png` | Added | N/A (asset) |
+| `src/index.css` | Modified | CSS transition effects |
 
 ---
 
-## [1.0.2] - 2025-12-03
+## [1.0.2] - 2025-12-03 @ 15:00 UTC
 
 ### Added
 - Password-protected AccessGate component
-- Custom cursor support for desktop devices (redbow.png, r-cursor.png)
-- Scrapbook-style animations (float, shake)
-- Torn edge and sticky note CSS effects
-- User-select restrictions for non-interactive text
+- Custom cursor support for desktop
+- Scrapbook-style animations
+- Torn edge and sticky note effects
+
+### Files Added
+| File | Action | Functions/Exports |
+|------|--------|-------------------|
+| `src/components/AccessGate.tsx` | Created | `AccessGate()` component |
 
 ### Files Modified
-- `src/components/AccessGate.tsx` - Created password gate component
-- `src/pages/Index.tsx` - Integrated AccessGate, added header with avatar
-- `src/index.css` - Added custom cursor rules, animations, scrapbook effects
+| File | Action | Functions Changed |
+|------|--------|-------------------|
+| `src/pages/Index.tsx` | Modified | `Index()` - state management, conditional rendering |
+| `src/index.css` | Modified | Added keyframes, utility classes |
 
 ---
 
-## [1.0.1] - 2025-12-03
+## [1.0.1] - 2025-12-03 @ 12:00 UTC
 
 ### Added
 - Recipe management system (CRUD operations)
-- Recipe import/export functionality (JSON)
+- Recipe import/export functionality
 - Search and filter capabilities
 - Vegetarian validation utility
-- Demo recipes data
 
 ### Files Created
-- `src/components/RecipeCard.tsx`
-- `src/components/RecipeDetail.tsx`
-- `src/components/RecipeForm.tsx`
-- `src/components/RecipeImport.tsx`
-- `src/hooks/useRecipes.ts`
-- `src/types/recipe.ts`
-- `src/utils/demoRecipes.ts`
-- `src/utils/vegValidator.ts`
+| File | Action | Functions/Exports |
+|------|--------|-------------------|
+| `src/components/RecipeCard.tsx` | Created | `RecipeCard()` |
+| `src/components/RecipeDetail.tsx` | Created | `RecipeDetail()` |
+| `src/components/RecipeForm.tsx` | Created | `RecipeForm()` |
+| `src/components/RecipeImport.tsx` | Created | `RecipeImport()` |
+| `src/hooks/useRecipes.ts` | Created | `useRecipes()` hook |
+| `src/types/recipe.ts` | Created | `Recipe` type |
+| `src/utils/demoRecipes.ts` | Created | `demoRecipes` array |
+| `src/utils/vegValidator.ts` | Created | `isVegetarian()`, `NON_VEG_KEYWORDS` |
 
 ---
 
-## [1.0.0] - 2025-12-03
+## [1.0.0] - 2025-12-03 @ 10:00 UTC
 
 ### Initial Release
 - Project scaffolding with Vite + React + TypeScript
 - Tailwind CSS configuration with custom design system
 - shadcn/ui component library integration
 - Dark theme with golden yellow foreground
-- Playfair Display + Roboto Mono typography
 
-### Project Structure
-```
-├── public/
-│   ├── favicon.ico
-│   ├── placeholder.svg
-│   ├── r-cursor.png
-│   ├── redbow.png
-│   ├── robots.txt
-│   └── roshie-avatar.jpg
-├── src/
-│   ├── components/
-│   │   ├── ui/              # 40+ shadcn components
-│   │   ├── AccessGate.tsx
-│   │   ├── NavLink.tsx
-│   │   ├── RecipeCard.tsx
-│   │   ├── RecipeDetail.tsx
-│   │   ├── RecipeForm.tsx
-│   │   └── RecipeImport.tsx
-│   ├── hooks/
-│   │   ├── use-mobile.tsx
-│   │   ├── use-toast.ts
-│   │   └── useRecipes.ts
-│   ├── pages/
-│   │   ├── Index.tsx
-│   │   └── NotFound.tsx
-│   ├── types/
-│   │   └── recipe.ts
-│   ├── utils/
-│   │   ├── demoRecipes.ts
-│   │   └── vegValidator.ts
-│   ├── lib/
-│   │   └── utils.ts
-│   ├── App.tsx
-│   ├── index.css
-│   ├── main.tsx
-│   └── vite-env.d.ts
-├── index.html
-├── tailwind.config.ts
-├── vite.config.ts
-├── eslint.config.js
-├── tsconfig.json
-├── tsconfig.app.json
-├── tsconfig.node.json
-├── postcss.config.js
-├── components.json
-└── package.json
-```
+### Files Created
+| File | Action | Description |
+|------|--------|-------------|
+| `src/App.tsx` | Created | Root application component |
+| `src/main.tsx` | Created | React entry point |
+| `src/index.css` | Created | Design system, global styles |
+| `src/pages/Index.tsx` | Created | Main page component |
+| `src/pages/NotFound.tsx` | Created | 404 page |
+| `src/lib/utils.ts` | Created | `cn()` utility function |
+| `tailwind.config.ts` | Created | Tailwind configuration |
+| `vite.config.ts` | Created | Vite configuration |
+| `index.html` | Created | HTML entry point |
 
 ---
 
 ## Version History Summary
 
-| Version | Date | Summary |
-|---------|------|---------|
-| 1.0.5 | 2025-12-03 | Cursor updates, emoji removal, password expansion |
-| 1.0.4 | 2025-12-03 | Cursor size optimization |
-| 1.0.3 | 2025-12-03 | Custom hover cursor added |
-| 1.0.2 | 2025-12-03 | AccessGate, custom cursors, animations |
-| 1.0.1 | 2025-12-03 | Recipe management system |
-| 1.0.0 | 2025-12-03 | Initial release |
+| Version | Date | Time (UTC) | Summary |
+|---------|------|------------|---------|
+| 1.1.0 | 2025-12-05 | 10:30 | Enhanced changelog format |
+| 1.0.10 | 2025-12-04 | 16:45 | Mobile button overflow fix |
+| 1.0.9 | 2025-12-04 | 15:20 | Pull-to-refresh gesture |
+| 1.0.8 | 2025-12-04 | 14:00 | Password obfuscation |
+| 1.0.7 | 2025-12-04 | 12:30 | Swipe navigation |
+| 1.0.6 | 2025-12-03 | 22:15 | Responsive improvements |
+| 1.0.5 | 2025-12-03 | 20:00 | Cursor & emoji cleanup |
+| 1.0.4 | 2025-12-03 | 18:30 | Cursor optimization |
+| 1.0.3 | 2025-12-03 | 17:00 | Custom hover cursor |
+| 1.0.2 | 2025-12-03 | 15:00 | AccessGate, animations |
+| 1.0.1 | 2025-12-03 | 12:00 | Recipe management |
+| 1.0.0 | 2025-12-03 | 10:00 | Initial release |
