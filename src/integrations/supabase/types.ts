@@ -27,7 +27,7 @@ export type Database = {
           tags: string[] | null
           title: string
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           cook_time?: string | null
@@ -41,7 +41,7 @@ export type Database = {
           tags?: string[] | null
           title: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           cook_time?: string | null
@@ -55,7 +55,7 @@ export type Database = {
           tags?: string[] | null
           title?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
