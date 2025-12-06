@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import AccessGate from "@/components/AccessGate";
+import { useState, useCallback } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import RecipeCard from "@/components/RecipeCard";
 import RecipeForm from "@/components/RecipeForm";
 import RecipeDetail from "@/components/RecipeDetail";
@@ -9,34 +9,21 @@ import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { Recipe, RecipeFormData } from "@/types/recipe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, BookOpen, Download, Upload, RefreshCw } from "lucide-react";
+import { Plus, Search, BookOpen, Download, Upload, RefreshCw, LogOut, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type View = "list" | "add" | "edit" | "detail" | "import";
 
 const Index = () => {
-  const [isUnlocked, setIsUnlocked] = useState(false);
   const [currentView, setCurrentView] = useState<View>("list");
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { recipes, addRecipe, updateRecipe, deleteRecipe, importRecipes, exportRecipes } = useRecipes();
+  const { recipes, isLoading, addRecipe, updateRecipe, deleteRecipe, importRecipes, exportRecipes, refresh } = useRecipes();
+  const { user, signOut } = useAuth();
   const { toast } = useToast();
 
-  // Check if user needs to unlock on mount
-  useEffect(() => {
-    setIsUnlocked(false);
-  }, []);
-
-  const handleUnlock = () => {
-    setIsUnlocked(true);
-    toast({
-      title: "Welcome back, Roshini!",
-      description: "Your veggie kingdom awaits",
-    });
-  };
-
-  const handleAddRecipe = (data: RecipeFormData) => {
-    const recipe = addRecipe({
+  const handleAddRecipe = async (data: RecipeFormData) => {
+    const recipe = await addRecipe({
       title: data.title,
       description: data.description,
       ingredients: data.ingredients.split("\n").filter(i => i.trim()),
@@ -46,18 +33,20 @@ const Index = () => {
       tags: data.tags ? data.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
     });
 
-    toast({
-      title: "Recipe added!",
-      description: `${recipe.title} is now in your cookbook`,
-    });
+    if (recipe) {
+      toast({
+        title: "Recipe added!",
+        description: `${recipe.title} is now in your cookbook`,
+      });
+    }
 
     setCurrentView("list");
   };
 
-  const handleUpdateRecipe = (data: RecipeFormData) => {
+  const handleUpdateRecipe = async (data: RecipeFormData) => {
     if (!selectedRecipe) return;
 
-    updateRecipe(selectedRecipe.id, {
+    await updateRecipe(selectedRecipe.id, {
       title: data.title,
       description: data.description,
       ingredients: data.ingredients.split("\n").filter(i => i.trim()),
@@ -75,11 +64,11 @@ const Index = () => {
     setCurrentView("detail");
   };
 
-  const handleDeleteRecipe = () => {
+  const handleDeleteRecipe = async () => {
     if (!selectedRecipe) return;
 
     const title = selectedRecipe.title;
-    deleteRecipe(selectedRecipe.id);
+    await deleteRecipe(selectedRecipe.id);
 
     toast({
       title: "Recipe deleted",
@@ -91,8 +80,8 @@ const Index = () => {
     setCurrentView("list");
   };
 
-  const handleImportRecipes = (importedRecipes: any[]) => {
-    const newRecipes = importRecipes(importedRecipes);
+  const handleImportRecipes = async (importedRecipes: any[]) => {
+    const newRecipes = await importRecipes(importedRecipes);
     toast({
       title: `Imported ${newRecipes.length} recipe${newRecipes.length > 1 ? 's' : ''}!`,
       description: "All recipes passed the veg check",
@@ -119,13 +108,20 @@ const Index = () => {
   };
 
   const handleRefresh = useCallback(async () => {
-    // Simulate a refresh - in a real app this would fetch from API
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await refresh();
     toast({
       title: "Refreshed!",
       description: `${recipes.length} recipes loaded`,
     });
-  }, [recipes.length, toast]);
+  }, [recipes.length, toast, refresh]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "Signed out",
+      description: "See you next time!",
+    });
+  };
 
   const { pullDistance, isRefreshing, isReadyToRefresh, handlers } = usePullToRefresh({
     onRefresh: handleRefresh,
@@ -138,8 +134,12 @@ const Index = () => {
     recipe.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  if (!isUnlocked) {
-    return <AccessGate onUnlock={handleUnlock} />;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (
@@ -184,6 +184,18 @@ const Index = () => {
           <p className="text-muted-foreground">
             A sassy, scrapbook-style vegetarian recipe journal
           </p>
+          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            <span className="font-mono">{user?.email}</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSignOut}
+              className="gap-1 text-xs"
+            >
+              <LogOut className="w-3 h-3" />
+              Sign out
+            </Button>
+          </div>
         </div>
 
         {/* Main Content */}
