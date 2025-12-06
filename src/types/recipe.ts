@@ -7,6 +7,7 @@ export interface Recipe {
   servings: number;
   cookTime?: string;
   tags?: string[];
+  isFavorite?: boolean;
   createdAt: string;
   updatedAt: string;
 }

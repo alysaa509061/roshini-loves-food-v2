@@ -1,96 +1,263 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Recipe } from '@/types/recipe';
 import { DEMO_RECIPES } from '@/utils/demoRecipes';
 
-const STORAGE_KEY = 'roshini_recipes';
-const DEMO_LOADED_KEY = 'roshini_demo_loaded';
+const DEMO_MIGRATED_KEY = 'roshini_demo_migrated';
 
 export const useRecipes = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
-  // Load recipes from localStorage on mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    const demoLoaded = localStorage.getItem(DEMO_LOADED_KEY);
+  // Fetch recipes from cloud
+  const fetchRecipes = useCallback(async () => {
+    if (!user) {
+      setRecipes([]);
+      setIsLoading(false);
+      return;
+    }
 
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setRecipes(parsed);
-      } catch (error) {
-        console.error('Failed to load recipes:', error);
+    try {
+      const { data, error } = await supabase
+        .from('recipes')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching recipes:', error);
+        return;
       }
-    } else if (!demoLoaded) {
-      // First time visitor - load demo recipes
-      const demoRecipesWithIds: Recipe[] = DEMO_RECIPES.map((recipe, index) => ({
-        ...recipe,
-        id: `demo-${index}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+
+      const mappedRecipes: Recipe[] = (data || []).map(r => ({
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        ingredients: r.ingredients || [],
+        instructions: r.instructions || [],
+        servings: r.servings,
+        cookTime: r.cook_time || undefined,
+        tags: r.tags || [],
+        isFavorite: r.is_favorite || false,
+        createdAt: r.created_at,
+        updatedAt: r.updated_at,
       }));
-      setRecipes(demoRecipesWithIds);
-      localStorage.setItem(DEMO_LOADED_KEY, 'true');
-    }
-  }, []);
 
-  // Save recipes to localStorage whenever they change
+      setRecipes(mappedRecipes);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  // Migrate demo recipes for first-time users
+  const migrateDemoRecipes = useCallback(async () => {
+    if (!user) return;
+    
+    const migrated = localStorage.getItem(`${DEMO_MIGRATED_KEY}_${user.id}`);
+    if (migrated) return;
+
+    // Check if user already has recipes
+    const { count } = await supabase
+      .from('recipes')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    if (count && count > 0) {
+      localStorage.setItem(`${DEMO_MIGRATED_KEY}_${user.id}`, 'true');
+      return;
+    }
+
+    // Add demo recipes
+    const demoRecipesData = DEMO_RECIPES.map(recipe => ({
+      user_id: user.id,
+      title: recipe.title,
+      description: recipe.description,
+      ingredients: recipe.ingredients,
+      instructions: recipe.instructions,
+      servings: recipe.servings,
+      cook_time: recipe.cookTime,
+      tags: recipe.tags,
+      is_favorite: false,
+    }));
+
+    const { error } = await supabase.from('recipes').insert(demoRecipesData);
+    
+    if (!error) {
+      localStorage.setItem(`${DEMO_MIGRATED_KEY}_${user.id}`, 'true');
+      fetchRecipes();
+    }
+  }, [user, fetchRecipes]);
+
+  // Set up real-time subscription
   useEffect(() => {
-    if (recipes.length > 0 || localStorage.getItem(STORAGE_KEY)) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
-    }
-  }, [recipes]);
+    if (!user) return;
 
-  const addRecipe = (recipe: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newRecipe: Recipe = {
-      ...recipe,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+    fetchRecipes();
+    migrateDemoRecipes();
+
+    // Subscribe to real-time changes
+    const channel = supabase
+      .channel('recipes-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'recipes',
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          // Refetch on any change for simplicity
+          fetchRecipes();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
     };
-    setRecipes(prev => [newRecipe, ...prev]);
+  }, [user, fetchRecipes, migrateDemoRecipes]);
+
+  const addRecipe = async (recipe: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt' | 'isFavorite'>) => {
+    if (!user) return null;
+
+    const { data, error } = await supabase
+      .from('recipes')
+      .insert({
+        user_id: user.id,
+        title: recipe.title,
+        description: recipe.description,
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions,
+        servings: recipe.servings,
+        cook_time: recipe.cookTime,
+        tags: recipe.tags,
+        is_favorite: false,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding recipe:', error);
+      return null;
+    }
+
+    const newRecipe: Recipe = {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      ingredients: data.ingredients || [],
+      instructions: data.instructions || [],
+      servings: data.servings,
+      cookTime: data.cook_time || undefined,
+      tags: data.tags || [],
+      isFavorite: data.is_favorite || false,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
+
     return newRecipe;
   };
 
-  const updateRecipe = (id: string, updates: Partial<Recipe>) => {
-    setRecipes(prev =>
-      prev.map(recipe =>
-        recipe.id === id
-          ? { ...recipe, ...updates, updatedAt: new Date().toISOString() }
-          : recipe
-      )
-    );
+  const updateRecipe = async (id: string, updates: Partial<Recipe>) => {
+    if (!user) return;
+
+    const dbUpdates: Record<string, unknown> = {};
+    if (updates.title !== undefined) dbUpdates.title = updates.title;
+    if (updates.description !== undefined) dbUpdates.description = updates.description;
+    if (updates.ingredients !== undefined) dbUpdates.ingredients = updates.ingredients;
+    if (updates.instructions !== undefined) dbUpdates.instructions = updates.instructions;
+    if (updates.servings !== undefined) dbUpdates.servings = updates.servings;
+    if (updates.cookTime !== undefined) dbUpdates.cook_time = updates.cookTime;
+    if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
+    if (updates.isFavorite !== undefined) dbUpdates.is_favorite = updates.isFavorite;
+
+    const { error } = await supabase
+      .from('recipes')
+      .update(dbUpdates)
+      .eq('id', id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('Error updating recipe:', error);
+    }
   };
 
-  const deleteRecipe = (id: string) => {
-    setRecipes(prev => prev.filter(recipe => recipe.id !== id));
+  const deleteRecipe = async (id: string) => {
+    if (!user) return;
+
+    const { error } = await supabase
+      .from('recipes')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('Error deleting recipe:', error);
+    }
   };
 
   const getRecipe = (id: string) => {
     return recipes.find(recipe => recipe.id === id);
   };
 
-  const importRecipes = (importedRecipes: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>[]) => {
-    const newRecipes: Recipe[] = importedRecipes.map(recipe => ({
-      ...recipe,
-      id: Date.now().toString() + Math.random(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+  const importRecipes = async (importedRecipes: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt' | 'isFavorite'>[]) => {
+    if (!user) return [];
+
+    const recipesData = importedRecipes.map(recipe => ({
+      user_id: user.id,
+      title: recipe.title,
+      description: recipe.description,
+      ingredients: recipe.ingredients,
+      instructions: recipe.instructions,
+      servings: recipe.servings,
+      cook_time: recipe.cookTime,
+      tags: recipe.tags,
+      is_favorite: false,
     }));
-    setRecipes(prev => [...newRecipes, ...prev]);
-    return newRecipes;
+
+    const { data, error } = await supabase
+      .from('recipes')
+      .insert(recipesData)
+      .select();
+
+    if (error) {
+      console.error('Error importing recipes:', error);
+      return [];
+    }
+
+    return data || [];
   };
 
   const exportRecipes = () => {
     return recipes;
   };
 
+  const toggleFavorite = async (id: string) => {
+    const recipe = recipes.find(r => r.id === id);
+    if (recipe) {
+      await updateRecipe(id, { isFavorite: !recipe.isFavorite });
+    }
+  };
+
+  const refresh = async () => {
+    await fetchRecipes();
+  };
+
   return {
     recipes,
+    isLoading,
     addRecipe,
     updateRecipe,
     deleteRecipe,
     getRecipe,
     importRecipes,
     exportRecipes,
+    toggleFavorite,
+    refresh,
   };
 };
