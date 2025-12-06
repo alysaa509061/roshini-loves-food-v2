@@ -1,29 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
 import { Recipe } from '@/types/recipe';
 import { DEMO_RECIPES } from '@/utils/demoRecipes';
 
-const DEMO_MIGRATED_KEY = 'roshini_demo_migrated';
+const DEMO_MIGRATED_KEY = 'roshini_demo_migrated_cloud';
 
 export const useRecipes = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
 
   // Fetch recipes from cloud
   const fetchRecipes = useCallback(async () => {
-    if (!user) {
-      setRecipes([]);
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const { data, error } = await supabase
         .from('recipes')
         .select('*')
-        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -51,29 +42,25 @@ export const useRecipes = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, []);
 
   // Migrate demo recipes for first-time users
   const migrateDemoRecipes = useCallback(async () => {
-    if (!user) return;
-    
-    const migrated = localStorage.getItem(`${DEMO_MIGRATED_KEY}_${user.id}`);
+    const migrated = localStorage.getItem(DEMO_MIGRATED_KEY);
     if (migrated) return;
 
-    // Check if user already has recipes
+    // Check if there are already recipes
     const { count } = await supabase
       .from('recipes')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id);
+      .select('*', { count: 'exact', head: true });
 
     if (count && count > 0) {
-      localStorage.setItem(`${DEMO_MIGRATED_KEY}_${user.id}`, 'true');
+      localStorage.setItem(DEMO_MIGRATED_KEY, 'true');
       return;
     }
 
     // Add demo recipes
     const demoRecipesData = DEMO_RECIPES.map(recipe => ({
-      user_id: user.id,
       title: recipe.title,
       description: recipe.description,
       ingredients: recipe.ingredients,
@@ -87,15 +74,13 @@ export const useRecipes = () => {
     const { error } = await supabase.from('recipes').insert(demoRecipesData);
     
     if (!error) {
-      localStorage.setItem(`${DEMO_MIGRATED_KEY}_${user.id}`, 'true');
+      localStorage.setItem(DEMO_MIGRATED_KEY, 'true');
       fetchRecipes();
     }
-  }, [user, fetchRecipes]);
+  }, [fetchRecipes]);
 
   // Set up real-time subscription
   useEffect(() => {
-    if (!user) return;
-
     fetchRecipes();
     migrateDemoRecipes();
 
@@ -108,7 +93,6 @@ export const useRecipes = () => {
           event: '*',
           schema: 'public',
           table: 'recipes',
-          filter: `user_id=eq.${user.id}`,
         },
         () => {
           // Refetch on any change for simplicity
@@ -120,15 +104,12 @@ export const useRecipes = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, fetchRecipes, migrateDemoRecipes]);
+  }, [fetchRecipes, migrateDemoRecipes]);
 
   const addRecipe = async (recipe: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt' | 'isFavorite'>) => {
-    if (!user) return null;
-
     const { data, error } = await supabase
       .from('recipes')
       .insert({
-        user_id: user.id,
         title: recipe.title,
         description: recipe.description,
         ingredients: recipe.ingredients,
@@ -164,8 +145,6 @@ export const useRecipes = () => {
   };
 
   const updateRecipe = async (id: string, updates: Partial<Recipe>) => {
-    if (!user) return;
-
     const dbUpdates: Record<string, unknown> = {};
     if (updates.title !== undefined) dbUpdates.title = updates.title;
     if (updates.description !== undefined) dbUpdates.description = updates.description;
@@ -179,8 +158,7 @@ export const useRecipes = () => {
     const { error } = await supabase
       .from('recipes')
       .update(dbUpdates)
-      .eq('id', id)
-      .eq('user_id', user.id);
+      .eq('id', id);
 
     if (error) {
       console.error('Error updating recipe:', error);
@@ -188,13 +166,10 @@ export const useRecipes = () => {
   };
 
   const deleteRecipe = async (id: string) => {
-    if (!user) return;
-
     const { error } = await supabase
       .from('recipes')
       .delete()
-      .eq('id', id)
-      .eq('user_id', user.id);
+      .eq('id', id);
 
     if (error) {
       console.error('Error deleting recipe:', error);
@@ -206,10 +181,7 @@ export const useRecipes = () => {
   };
 
   const importRecipes = async (importedRecipes: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt' | 'isFavorite'>[]) => {
-    if (!user) return [];
-
     const recipesData = importedRecipes.map(recipe => ({
-      user_id: user.id,
       title: recipe.title,
       description: recipe.description,
       ingredients: recipe.ingredients,

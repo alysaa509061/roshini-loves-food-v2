@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import AccessGate from "@/components/AccessGate";
 import RecipeCard from "@/components/RecipeCard";
 import RecipeForm from "@/components/RecipeForm";
 import RecipeDetail from "@/components/RecipeDetail";
@@ -9,18 +9,26 @@ import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { Recipe, RecipeFormData } from "@/types/recipe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, BookOpen, Download, Upload, RefreshCw, LogOut, Loader2 } from "lucide-react";
+import { Plus, Search, BookOpen, Download, Upload, RefreshCw, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type View = "list" | "add" | "edit" | "detail" | "import";
 
 const Index = () => {
+  const [isUnlocked, setIsUnlocked] = useState(false);
   const [currentView, setCurrentView] = useState<View>("list");
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { recipes, isLoading, addRecipe, updateRecipe, deleteRecipe, importRecipes, exportRecipes, refresh } = useRecipes();
-  const { user, signOut } = useAuth();
   const { toast } = useToast();
+
+  const handleUnlock = () => {
+    setIsUnlocked(true);
+    toast({
+      title: "Welcome back, Roshini!",
+      description: "Your veggie kingdom awaits",
+    });
+  };
 
   const handleAddRecipe = async (data: RecipeFormData) => {
     const recipe = await addRecipe({
@@ -115,14 +123,6 @@ const Index = () => {
     });
   }, [recipes.length, toast, refresh]);
 
-  const handleSignOut = async () => {
-    await signOut();
-    toast({
-      title: "Signed out",
-      description: "See you next time!",
-    });
-  };
-
   const { pullDistance, isRefreshing, isReadyToRefresh, handlers } = usePullToRefresh({
     onRefresh: handleRefresh,
     threshold: 80,
@@ -133,6 +133,11 @@ const Index = () => {
     recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
     recipe.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  // Show AccessGate if not unlocked
+  if (!isUnlocked) {
+    return <AccessGate onUnlock={handleUnlock} />;
+  }
 
   if (isLoading) {
     return (
@@ -184,18 +189,6 @@ const Index = () => {
           <p className="text-muted-foreground">
             A sassy, scrapbook-style vegetarian recipe journal
           </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <span className="font-mono">{user?.email}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSignOut}
-              className="gap-1 text-xs"
-            >
-              <LogOut className="w-3 h-3" />
-              Sign out
-            </Button>
-          </div>
         </div>
 
         {/* Main Content */}
