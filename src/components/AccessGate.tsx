@@ -42,7 +42,7 @@ const AccessGate = ({ onUnlock }: AccessGateProps) => {
             RoshiniLovesFood
           </h1>
           <p className="text-muted-foreground text-sm">
-            A Vegetarian Paradise
+            Hi Roshini, this is your personal recipe book!
           </p>
         </div>
 
@@ -75,7 +75,7 @@ const AccessGate = ({ onUnlock }: AccessGateProps) => {
         </form>
 
         <p className="text-xs text-muted-foreground">
-          Hint: Think special birthday dates
+          Hint: Think special dates
         </p>
       </div>
     </div>
