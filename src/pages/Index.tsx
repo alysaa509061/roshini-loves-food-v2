@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import AccessGate from "@/components/AccessGate";
+import InstallPrompt from "@/components/InstallPrompt";
 import RecipeCard from "@/components/RecipeCard";
 import RecipeForm from "@/components/RecipeForm";
 import RecipeDetail from "@/components/RecipeDetail";
@@ -152,6 +153,7 @@ const Index = () => {
       className="min-h-screen p-4 md:p-8"
       {...(currentView === "list" ? handlers : {})}
     >
+      <InstallPrompt />
       {/* Pull to refresh indicator */}
       {currentView === "list" && pullDistance > 0 && (
         <div 
