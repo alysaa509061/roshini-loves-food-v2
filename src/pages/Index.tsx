@@ -1,7 +1,9 @@
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import AccessGate from "@/components/AccessGate";
 import InstallPrompt from "@/components/InstallPrompt";
 import RecipeCard from "@/components/RecipeCard";
+import RecipeGallery from "@/components/RecipeGallery";
 import RecipeForm from "@/components/RecipeForm";
 import RecipeDetail from "@/components/RecipeDetail";
 import RecipeImport from "@/components/RecipeImport";
@@ -10,14 +12,17 @@ import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { Recipe, RecipeFormData } from "@/types/recipe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, BookOpen, Download, Upload, RefreshCw, Loader2 } from "lucide-react";
+import { Plus, Search, BookOpen, Download, Upload, RefreshCw, Loader2, LayoutGrid, Image, Smartphone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type View = "list" | "add" | "edit" | "detail" | "import";
+type ListMode = "grid" | "gallery";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [currentView, setCurrentView] = useState<View>("list");
+  const [listMode, setListMode] = useState<ListMode>("grid");
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { recipes, isLoading, addRecipe, updateRecipe, deleteRecipe, importRecipes, exportRecipes, refresh } = useRecipes();
@@ -191,6 +196,15 @@ const Index = () => {
           <p className="text-muted-foreground">
             A sassy, scrapbook-style vegetarian recipe journal
           </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/install")}
+            className="gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <Smartphone className="w-4 h-4" />
+            Install App
+          </Button>
         </div>
 
         {/* Main Content */}
@@ -208,6 +222,28 @@ const Index = () => {
                 />
               </div>
               <div className="flex flex-wrap gap-2">
+                {/* View Toggle */}
+                <div className="flex border rounded-md overflow-hidden">
+                  <Button
+                    variant={listMode === "grid" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setListMode("grid")}
+                    className="rounded-none gap-1 text-xs px-2"
+                  >
+                    <LayoutGrid className="w-3 h-3" />
+                    <span className="hidden sm:inline">Grid</span>
+                  </Button>
+                  <Button
+                    variant={listMode === "gallery" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setListMode("gallery")}
+                    className="rounded-none gap-1 text-xs px-2"
+                  >
+                    <Image className="w-3 h-3" />
+                    <span className="hidden sm:inline">Gallery</span>
+                  </Button>
+                </div>
+                
                 <Button
                   onClick={handleExportRecipes}
                   variant="outline"
@@ -238,7 +274,7 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Recipe Grid */}
+            {/* Recipe Display */}
             {filteredRecipes.length === 0 ? (
               <div className="text-center py-16 space-y-4 sticky-note">
                 <BookOpen className="w-16 h-16 mx-auto text-muted-foreground opacity-50" />
@@ -262,6 +298,14 @@ const Index = () => {
                   )}
                 </div>
               </div>
+            ) : listMode === "gallery" ? (
+              <RecipeGallery
+                recipes={filteredRecipes}
+                onSelectRecipe={(recipe) => {
+                  setSelectedRecipe(recipe);
+                  setCurrentView("detail");
+                }}
+              />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredRecipes.map(recipe => (
