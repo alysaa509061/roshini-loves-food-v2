@@ -31,7 +31,8 @@ export const DEMO_RECIPES: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>[] = [
     ],
     servings: 4,
     cookTime: "45 mins",
-    tags: ["Indian", "comfort food", "creamy", "dinner"]
+    tags: ["Indian", "comfort food", "creamy", "dinner"],
+    category: "dinner"
   },
   {
     title: "Spicy Thai Basil Tofu Stir-Fry",
@@ -64,7 +65,8 @@ export const DEMO_RECIPES: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>[] = [
     ],
     servings: 3,
     cookTime: "20 mins",
-    tags: ["Thai", "quick", "spicy", "Asian"]
+    tags: ["Thai", "quick", "spicy", "Asian"],
+    category: "dinner"
   },
   {
     title: "Mediterranean Lentil Soup",
@@ -99,6 +101,7 @@ export const DEMO_RECIPES: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>[] = [
     ],
     servings: 6,
     cookTime: "40 mins",
-    tags: ["Mediterranean", "healthy", "soup", "comfort food"]
+    tags: ["Mediterranean", "healthy", "soup", "comfort food"],
+    category: "lunch"
   }
 ];

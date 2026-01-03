@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Clock, Users, Minus, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Clock, Users, Minus, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Heart, ChefHat } from "lucide-react";
 import { useSwipe } from "@/hooks/useSwipe";
 
 interface RecipeDetailProps {
@@ -12,6 +12,8 @@ interface RecipeDetailProps {
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onToggleFavorite: () => void;
+  onStartCooking: () => void;
   onPrevious?: () => void;
   onNext?: () => void;
   hasPrevious?: boolean;
@@ -23,6 +25,8 @@ const RecipeDetail = ({
   onBack, 
   onEdit, 
   onDelete,
+  onToggleFavorite,
+  onStartCooking,
   onPrevious,
   onNext,
   hasPrevious = false,
@@ -131,6 +135,29 @@ const RecipeDetail = ({
           <span className="truncate">Back to Recipes</span>
         </Button>
         <div className="flex gap-2 self-end sm:self-auto">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onToggleFavorite}
+            className="shrink-0"
+            title={recipe.isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Heart
+              className={`w-4 h-4 ${
+                recipe.isFavorite
+                  ? "fill-destructive text-destructive"
+                  : ""
+              }`}
+            />
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onStartCooking}
+            className="gap-2 shrink-0"
+          >
+            <ChefHat className="w-4 h-4" />
+            <span className="hidden sm:inline">Start Cooking</span>
+          </Button>
           <Button variant="outline" size="icon" onClick={onEdit} className="shrink-0">
             <Edit className="w-4 h-4" />
           </Button>

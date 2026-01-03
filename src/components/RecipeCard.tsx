@@ -1,14 +1,15 @@
 import { Recipe } from "@/types/recipe";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Users } from "lucide-react";
+import { Clock, Users, Heart } from "lucide-react";
 
 interface RecipeCardProps {
   recipe: Recipe;
   onClick: () => void;
+  onToggleFavorite?: (e: React.MouseEvent) => void;
 }
 
-const RecipeCard = ({ recipe, onClick }: RecipeCardProps) => {
+const RecipeCard = ({ recipe, onClick, onToggleFavorite }: RecipeCardProps) => {
   return (
     <Card
       className="cursor-pointer hover:border-primary transition-all hover:shadow-lg hover:shadow-primary/20"
@@ -17,9 +18,28 @@ const RecipeCard = ({ recipe, onClick }: RecipeCardProps) => {
       <CardHeader>
         <CardTitle className="flex items-start justify-between gap-2 font-heading">
           <span className="text-lg">{recipe.title}</span>
-          <Badge variant="outline" className="bg-accent/20 text-accent-foreground border-accent shrink-0">
-            Veg
-          </Badge>
+          <div className="flex items-center gap-1 shrink-0">
+            {onToggleFavorite && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite(e);
+                }}
+                className="p-1 hover:scale-110 transition-transform"
+              >
+                <Heart
+                  className={`w-4 h-4 ${
+                    recipe.isFavorite
+                      ? "fill-destructive text-destructive"
+                      : "text-muted-foreground"
+                  }`}
+                />
+              </button>
+            )}
+            <Badge variant="outline" className="bg-accent/20 text-accent-foreground border-accent">
+              Veg
+            </Badge>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

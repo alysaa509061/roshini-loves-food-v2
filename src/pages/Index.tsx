@@ -7,25 +7,33 @@ import RecipeGallery from "@/components/RecipeGallery";
 import RecipeForm from "@/components/RecipeForm";
 import RecipeDetail from "@/components/RecipeDetail";
 import RecipeImport from "@/components/RecipeImport";
+import CookingMode from "@/components/CookingMode";
+import ShoppingList from "@/components/ShoppingList";
+import CategoryFilter from "@/components/CategoryFilter";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useRecipes } from "@/hooks/useRecipes";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { Recipe, RecipeFormData } from "@/types/recipe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, BookOpen, Download, Upload, RefreshCw, Loader2, LayoutGrid, Image, Smartphone } from "lucide-react";
+import { Plus, Search, BookOpen, Download, Upload, RefreshCw, Loader2, LayoutGrid, Image, Smartphone, Heart, ShoppingCart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-type View = "list" | "add" | "edit" | "detail" | "import";
+type View = "list" | "add" | "edit" | "detail" | "import" | "shopping";
 type ListMode = "grid" | "gallery";
+type FilterMode = "all" | "favorites";
 
 const Index = () => {
   const navigate = useNavigate();
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [currentView, setCurrentView] = useState<View>("list");
   const [listMode, setListMode] = useState<ListMode>("grid");
+  const [filterMode, setFilterMode] = useState<FilterMode>("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { recipes, isLoading, addRecipe, updateRecipe, deleteRecipe, importRecipes, exportRecipes, refresh } = useRecipes();
+  const [showCookingMode, setShowCookingMode] = useState(false);
+  const { recipes, isLoading, addRecipe, updateRecipe, deleteRecipe, importRecipes, exportRecipes, toggleFavorite, refresh } = useRecipes();
   const { toast } = useToast();
 
   const handleUnlock = () => {
@@ -45,6 +53,7 @@ const Index = () => {
       servings: data.servings,
       cookTime: data.cookTime,
       tags: data.tags ? data.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+      category: data.category || "dinner",
     });
 
     if (recipe) {
@@ -68,6 +77,7 @@ const Index = () => {
       servings: data.servings,
       cookTime: data.cookTime,
       tags: data.tags ? data.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+      category: data.category || "dinner",
     });
 
     toast({
@@ -92,6 +102,14 @@ const Index = () => {
 
     setSelectedRecipe(null);
     setCurrentView("list");
+  };
+
+  const handleToggleFavorite = async (id: string) => {
+    await toggleFavorite(id);
+    // Update selectedRecipe if it's the one being toggled
+    if (selectedRecipe?.id === id) {
+      setSelectedRecipe(prev => prev ? { ...prev, isFavorite: !prev.isFavorite } : null);
+    }
   };
 
   const handleImportRecipes = async (importedRecipes: any[]) => {
@@ -134,11 +152,21 @@ const Index = () => {
     threshold: 80,
   });
 
-  const filteredRecipes = recipes.filter(recipe =>
-    recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    recipe.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  // Apply all filters
+  const filteredRecipes = recipes.filter(recipe => {
+    // Search filter
+    const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      recipe.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    // Favorites filter
+    const matchesFavorites = filterMode === "all" || recipe.isFavorite;
+    
+    // Category filter
+    const matchesCategory = categoryFilter === "all" || recipe.category === categoryFilter;
+    
+    return matchesSearch && matchesFavorites && matchesCategory;
+  });
 
   // Show AccessGate if not unlocked
   if (!isUnlocked) {
@@ -150,6 +178,16 @@ const Index = () => {
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
+    );
+  }
+
+  // Show cooking mode overlay
+  if (showCookingMode && selectedRecipe) {
+    return (
+      <CookingMode
+        recipe={selectedRecipe}
+        onClose={() => setShowCookingMode(false)}
+      />
     );
   }
 
@@ -196,15 +234,18 @@ const Index = () => {
           <p className="text-muted-foreground">
             A sassy, scrapbook-style vegetarian recipe journal
           </p>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate("/install")}
-            className="gap-2 text-muted-foreground hover:text-foreground"
-          >
-            <Smartphone className="w-4 h-4" />
-            Install App
-          </Button>
+          <div className="flex items-center justify-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/install")}
+              className="gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <Smartphone className="w-4 h-4" />
+              Install App
+            </Button>
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Main Content */}
@@ -221,6 +262,10 @@ const Index = () => {
                   className="pl-10"
                 />
               </div>
+              
+              {/* Category Filter */}
+              <CategoryFilter selected={categoryFilter} onSelect={setCategoryFilter} />
+              
               <div className="flex flex-wrap gap-2">
                 {/* View Toggle */}
                 <div className="flex border rounded-md overflow-hidden">
@@ -243,6 +288,28 @@ const Index = () => {
                     <span className="hidden sm:inline">Gallery</span>
                   </Button>
                 </div>
+                
+                {/* Favorites Toggle */}
+                <Button
+                  variant={filterMode === "favorites" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setFilterMode(filterMode === "all" ? "favorites" : "all")}
+                  className="gap-1 text-xs"
+                >
+                  <Heart className={`w-3 h-3 ${filterMode === "favorites" ? "fill-current" : ""}`} />
+                  <span className="hidden sm:inline">Favorites</span>
+                </Button>
+                
+                {/* Shopping List */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentView("shopping")}
+                  className="gap-1 text-xs"
+                >
+                  <ShoppingCart className="w-3 h-3" />
+                  <span className="hidden sm:inline">Shopping List</span>
+                </Button>
                 
                 <Button
                   onClick={handleExportRecipes}
@@ -280,14 +347,18 @@ const Index = () => {
                 <BookOpen className="w-16 h-16 mx-auto text-muted-foreground opacity-50" />
                 <div>
                   <h3 className="text-xl font-semibold mb-2 font-heading">
-                    {searchQuery ? "No recipes found" : "No recipes yet!"}
+                    {searchQuery || filterMode === "favorites" || categoryFilter !== "all" ? "No recipes found" : "No recipes yet!"}
                   </h3>
                   <p className="text-muted-foreground mb-4">
                     {searchQuery
                       ? "Try a different search term"
+                      : filterMode === "favorites"
+                      ? "Mark some recipes as favorites"
+                      : categoryFilter !== "all"
+                      ? `No ${categoryFilter} recipes yet`
                       : "Start building your veggie cookbook"}
                   </p>
-                  {!searchQuery && (
+                  {!searchQuery && filterMode === "all" && categoryFilter === "all" && (
                     <Button
                       onClick={() => setCurrentView("add")}
                       className="font-mono gap-2"
@@ -316,6 +387,7 @@ const Index = () => {
                       setSelectedRecipe(recipe);
                       setCurrentView("detail");
                     }}
+                    onToggleFavorite={() => handleToggleFavorite(recipe.id)}
                   />
                 ))}
               </div>
@@ -345,6 +417,13 @@ const Index = () => {
           />
         )}
 
+        {currentView === "shopping" && (
+          <ShoppingList
+            recipes={recipes}
+            onClose={() => setCurrentView("list")}
+          />
+        )}
+
         {currentView === "detail" && selectedRecipe && (
           <RecipeDetail
             recipe={selectedRecipe}
@@ -354,6 +433,8 @@ const Index = () => {
             }}
             onEdit={() => setCurrentView("edit")}
             onDelete={handleDeleteRecipe}
+            onToggleFavorite={() => handleToggleFavorite(selectedRecipe.id)}
+            onStartCooking={() => setShowCookingMode(true)}
             hasPrevious={filteredRecipes.findIndex(r => r.id === selectedRecipe.id) > 0}
             hasNext={filteredRecipes.findIndex(r => r.id === selectedRecipe.id) < filteredRecipes.length - 1}
             onPrevious={() => {
