@@ -7,6 +7,7 @@ export interface Recipe {
   servings: number;
   cookTime?: string;
   tags?: string[];
+  category?: string;
   isFavorite?: boolean;
   createdAt: string;
   updatedAt: string;
@@ -20,4 +21,5 @@ export interface RecipeFormData {
   servings: number;
   cookTime?: string;
   tags?: string;
+  category?: string;
 }

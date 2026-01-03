@@ -31,6 +31,7 @@ export const useRecipes = () => {
         servings: r.servings,
         cookTime: r.cook_time || undefined,
         tags: r.tags || [],
+        category: r.category || 'dinner',
         isFavorite: r.is_favorite || false,
         createdAt: r.created_at,
         updatedAt: r.updated_at,
@@ -117,6 +118,7 @@ export const useRecipes = () => {
         servings: recipe.servings,
         cook_time: recipe.cookTime,
         tags: recipe.tags,
+        category: recipe.category || 'dinner',
         is_favorite: false,
       })
       .select()
@@ -136,6 +138,7 @@ export const useRecipes = () => {
       servings: data.servings,
       cookTime: data.cook_time || undefined,
       tags: data.tags || [],
+      category: data.category || 'dinner',
       isFavorite: data.is_favorite || false,
       createdAt: data.created_at,
       updatedAt: data.updated_at,
@@ -153,6 +156,7 @@ export const useRecipes = () => {
     if (updates.servings !== undefined) dbUpdates.servings = updates.servings;
     if (updates.cookTime !== undefined) dbUpdates.cook_time = updates.cookTime;
     if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
+    if (updates.category !== undefined) dbUpdates.category = updates.category;
     if (updates.isFavorite !== undefined) dbUpdates.is_favorite = updates.isFavorite;
 
     const { error } = await supabase

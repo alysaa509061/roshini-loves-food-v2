@@ -7,7 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertCircle, Sparkles, ArrowLeft } from "lucide-react";
+import { CATEGORIES } from "@/components/CategoryFilter";
 
 interface RecipeFormProps {
   recipe?: Recipe;
@@ -24,6 +26,7 @@ const RecipeForm = ({ recipe, onSubmit, onCancel }: RecipeFormProps) => {
     servings: recipe?.servings || 2,
     cookTime: recipe?.cookTime || "",
     tags: recipe?.tags?.join(", ") || "",
+    category: recipe?.category || "dinner",
   });
 
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -131,6 +134,25 @@ const RecipeForm = ({ recipe, onSubmit, onCancel }: RecipeFormProps) => {
                 placeholder="30 mins"
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Category</Label>
+            <Select
+              value={formData.category || "dinner"}
+              onValueChange={(value) => handleChange("category", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.filter((c) => c.value !== "all").map((cat) => (
+                  <SelectItem key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
