@@ -2,6 +2,7 @@ import { Recipe } from "@/types/recipe";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Users, Heart } from "lucide-react";
+import { getRecipeImage } from "@/utils/recipeImages";
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -10,11 +11,18 @@ interface RecipeCardProps {
 }
 
 const RecipeCard = ({ recipe, onClick, onToggleFavorite }: RecipeCardProps) => {
+  const image = getRecipeImage(recipe.id);
+
   return (
     <Card
-      className="cursor-pointer hover:border-primary transition-all hover:shadow-lg hover:shadow-primary/20"
+      className="cursor-pointer hover:border-primary transition-all hover:shadow-lg hover:shadow-primary/20 overflow-hidden"
       onClick={onClick}
     >
+      {image && (
+        <div className="h-40 overflow-hidden">
+          <img src={image} alt={recipe.title} className="w-full h-full object-cover" />
+        </div>
+      )}
       <CardHeader>
         <CardTitle className="flex items-start justify-between gap-2 font-heading">
           <span className="text-lg">{recipe.title}</span>

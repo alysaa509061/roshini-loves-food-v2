@@ -10,6 +10,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertCircle, Sparkles, ArrowLeft } from "lucide-react";
 import { CATEGORIES } from "@/components/CategoryFilter";
+import RecipeImageUpload from "@/components/RecipeImageUpload";
+import { getRecipeImage } from "@/utils/recipeImages";
 
 interface RecipeFormProps {
   recipe?: Recipe;
@@ -18,6 +20,8 @@ interface RecipeFormProps {
 }
 
 const RecipeForm = ({ recipe, onSubmit, onCancel }: RecipeFormProps) => {
+  const existingImage = recipe ? getRecipeImage(recipe.id) : null;
+  
   const [formData, setFormData] = useState<RecipeFormData>({
     title: recipe?.title || "",
     description: recipe?.description || "",
@@ -27,6 +31,7 @@ const RecipeForm = ({ recipe, onSubmit, onCancel }: RecipeFormProps) => {
     cookTime: recipe?.cookTime || "",
     tags: recipe?.tags?.join(", ") || "",
     category: recipe?.category || "dinner",
+    imageBase64: existingImage,
   });
 
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -41,7 +46,6 @@ const RecipeForm = ({ recipe, onSubmit, onCancel }: RecipeFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate all text fields for non-veg content
     const allText = [
       formData.title,
       formData.description,
@@ -88,6 +92,15 @@ const RecipeForm = ({ recipe, onSubmit, onCancel }: RecipeFormProps) => {
               </AlertDescription>
             </Alert>
           )}
+
+          {/* Image Upload */}
+          <div className="space-y-2">
+            <Label>Recipe Photo</Label>
+            <RecipeImageUpload
+              image={formData.imageBase64 || null}
+              onChange={(base64) => setFormData(prev => ({ ...prev, imageBase64: base64 }))}
+            />
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="title">Recipe Name</Label>

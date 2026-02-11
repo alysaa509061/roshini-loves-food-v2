@@ -9,6 +9,7 @@ export interface Recipe {
   tags?: string[];
   category?: string;
   isFavorite?: boolean;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -22,4 +23,5 @@ export interface RecipeFormData {
   cookTime?: string;
   tags?: string;
   category?: string;
+  imageBase64?: string | null;
 }
