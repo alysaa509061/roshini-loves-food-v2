@@ -9,6 +9,7 @@ import RecipeDetail from "@/components/RecipeDetail";
 import RecipeImport from "@/components/RecipeImport";
 import CookingMode from "@/components/CookingMode";
 import ShoppingList from "@/components/ShoppingList";
+import MealPlanner from "@/components/MealPlanner";
 import CategoryFilter from "@/components/CategoryFilter";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useRecipes } from "@/hooks/useRecipes";
@@ -16,10 +17,11 @@ import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { Recipe, RecipeFormData } from "@/types/recipe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, BookOpen, Download, Upload, RefreshCw, Loader2, LayoutGrid, Image, Smartphone, Heart, ShoppingCart } from "lucide-react";
+import { Plus, Search, BookOpen, Download, Upload, RefreshCw, Loader2, LayoutGrid, Image, Smartphone, Heart, ShoppingCart, CalendarDays } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { saveRecipeImage, deleteRecipeImage } from "@/utils/recipeImages";
 
-type View = "list" | "add" | "edit" | "detail" | "import" | "shopping";
+type View = "list" | "add" | "edit" | "detail" | "import" | "shopping" | "mealplan";
 type ListMode = "grid" | "gallery";
 type FilterMode = "all" | "favorites";
 
@@ -57,6 +59,10 @@ const Index = () => {
     });
 
     if (recipe) {
+      // Save image to localStorage if provided
+      if (data.imageBase64) {
+        saveRecipeImage(recipe.id, data.imageBase64);
+      }
       toast({
         title: "Recipe added!",
         description: `${recipe.title} is now in your cookbook`,
@@ -80,6 +86,13 @@ const Index = () => {
       category: data.category || "dinner",
     });
 
+    // Update image in localStorage
+    if (data.imageBase64) {
+      saveRecipeImage(selectedRecipe.id, data.imageBase64);
+    } else if (data.imageBase64 === null) {
+      deleteRecipeImage(selectedRecipe.id);
+    }
+
     toast({
       title: "Recipe updated!",
       description: `${data.title} has been saved`,
@@ -92,6 +105,7 @@ const Index = () => {
     if (!selectedRecipe) return;
 
     const title = selectedRecipe.title;
+    deleteRecipeImage(selectedRecipe.id);
     await deleteRecipe(selectedRecipe.id);
 
     toast({
@@ -311,6 +325,17 @@ const Index = () => {
                   <span className="hidden sm:inline">Shopping List</span>
                 </Button>
                 
+                {/* Meal Planner */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentView("mealplan")}
+                  className="gap-1 text-xs"
+                >
+                  <CalendarDays className="w-3 h-3" />
+                  <span className="hidden sm:inline">Meal Plan</span>
+                </Button>
+
                 <Button
                   onClick={handleExportRecipes}
                   variant="outline"
@@ -419,6 +444,13 @@ const Index = () => {
 
         {currentView === "shopping" && (
           <ShoppingList
+            recipes={recipes}
+            onClose={() => setCurrentView("list")}
+          />
+        )}
+
+        {currentView === "mealplan" && (
+          <MealPlanner
             recipes={recipes}
             onClose={() => setCurrentView("list")}
           />

@@ -2,6 +2,7 @@ import { Recipe } from "@/types/recipe";
 import { Clock, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { getRecipeImage } from "@/utils/recipeImages";
 
 interface RecipeGalleryProps {
   recipes: Recipe[];
@@ -44,15 +45,22 @@ const RecipeGallery = ({ recipes, onSelectRecipe }: RecipeGalleryProps) => {
         className="relative aspect-[4/3] md:aspect-[16/9] rounded-2xl overflow-hidden cursor-pointer group"
         onClick={() => onSelectRecipe(currentRecipe)}
       >
-        {/* Background gradient */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${getRecipeColor(currentRecipe.title)}`} />
-        
-        {/* Decorative elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-4 left-4 w-20 h-20 border-4 border-white/50 rounded-full" />
-          <div className="absolute bottom-8 right-8 w-32 h-32 border-4 border-white/50 rounded-full" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border-2 border-white/30 rotate-45" />
-        </div>
+      {/* Background - use image if available, else gradient */}
+        {(() => {
+          const img = getRecipeImage(currentRecipe.id);
+          return img ? (
+            <img src={img} alt={currentRecipe.title} className="absolute inset-0 w-full h-full object-cover" />
+          ) : (
+            <>
+              <div className={`absolute inset-0 bg-gradient-to-br ${getRecipeColor(currentRecipe.title)}`} />
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute top-4 left-4 w-20 h-20 border-4 border-white/50 rounded-full" />
+                <div className="absolute bottom-8 right-8 w-32 h-32 border-4 border-white/50 rounded-full" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border-2 border-white/30 rotate-45" />
+              </div>
+            </>
+          );
+        })()}
 
         {/* Content */}
         <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 bg-gradient-to-t from-black/60 via-black/20 to-transparent">

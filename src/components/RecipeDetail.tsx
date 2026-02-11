@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Clock, Users, Minus, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Heart, ChefHat } from "lucide-react";
 import { useSwipe } from "@/hooks/useSwipe";
+import { getRecipeImage } from "@/utils/recipeImages";
 
 interface RecipeDetailProps {
   recipe: Recipe;
@@ -167,7 +168,12 @@ const RecipeDetail = ({
         </div>
       </div>
 
-      <Card>
+      <Card className="overflow-hidden">
+        {(() => { const img = getRecipeImage(recipe.id); return img ? (
+          <div className="h-64 md:h-80 overflow-hidden">
+            <img src={img} alt={recipe.title} className="w-full h-full object-cover" />
+          </div>
+        ) : null; })()}
         <CardHeader>
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
